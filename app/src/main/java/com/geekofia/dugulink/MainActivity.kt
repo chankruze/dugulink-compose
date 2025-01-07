@@ -7,8 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,10 +16,10 @@ import androidx.navigation.compose.rememberNavController
 import com.geekofia.dugulink.onboarding.ui.OnboardingScreen
 import com.geekofia.dugulink.ui.theme.DuguLinkTheme
 import androidx.compose.runtime.collectAsState
-import androidx.navigation.NavHostController
 import com.geekofia.dugulink.auth.ui.LoginScreen
 import com.geekofia.dugulink.auth.ui.SignUpScreen
-import com.google.firebase.auth.FirebaseAuth
+import com.geekofia.dugulink.dashboard.ui.DashboardScreen
+import com.geekofia.dugulink.root.ui.RootScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,18 +30,18 @@ class MainActivity : ComponentActivity() {
             val mainViewModel: MainViewModel = viewModel()
             val navigationDestination = mainViewModel.navigateTo.collectAsState().value
 
-            DuguLinkTheme {
-                // Observe navigation events
-                LaunchedEffect(navigationDestination) {
-                    navigationDestination?.let { destination ->
-                        navController.navigate(destination) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
+            // Observe navigation events
+            LaunchedEffect(navigationDestination) {
+                navigationDestination?.let { destination ->
+                    navController.navigate(destination) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
                         }
                     }
                 }
+            }
 
+            DuguLinkTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
@@ -51,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable("root") {
-                            RootScreenContent(navController, mainViewModel)
+                            RootScreen(navController, mainViewModel)
                         }
                         composable("onboarding") {
                             OnboardingScreen(onFinish = {
@@ -74,38 +72,12 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToLogin = { mainViewModel.handleNavigationToSignIn() },
                             )
                         }
-                        composable("home") {
-                            Text("Welcome to Home Screen!")
+                        composable("dashboard") {
+                            DashboardScreen(mainViewModel)
                         }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun RootScreenContent(navController: NavHostController, mainViewModel: MainViewModel) {
-    val user = FirebaseAuth.getInstance().currentUser
-    val onboardingCompleted = mainViewModel.isOnboardingCompleted.collectAsState().value
-
-    // No UI elements
-
-    // Navigate based on the auth state and onboarding status
-    LaunchedEffect(user, onboardingCompleted) {
-        if (user != null) {
-            // If the user is logged in, check onboarding completion
-            if (onboardingCompleted) {
-                mainViewModel.handleLoginSuccess()
-            } else {
-                // If onboarding is not completed, navigate to the onboarding screen
-                navController.navigate("onboarding") {
-                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                }
-            }
-        } else {
-            // If the user is not logged in, navigate to the login screen
-            mainViewModel.handleNavigationToSignIn()
         }
     }
 }

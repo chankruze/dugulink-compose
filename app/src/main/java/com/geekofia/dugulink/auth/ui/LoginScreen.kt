@@ -3,15 +3,20 @@ package com.geekofia.dugulink.auth.ui
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -22,9 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.geekofia.dugulink.R
 import com.geekofia.dugulink.auth.viewmodel.AuthViewModel
 import com.geekofia.dugulink.utils.getGoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -40,24 +47,25 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsState()
     val activity = LocalContext.current as Activity
     val googleSignInClient = getGoogleSignInClient(activity)
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
-            val idToken = account.idToken
-            if (idToken != null) {
-                viewModel.loginWithGoogle(idToken, onLoginSuccess)
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
+                val idToken = account.idToken
+                if (idToken != null) {
+                    viewModel.loginWithGoogle(idToken, onLoginSuccess)
+                }
+            } catch (e: ApiException) {
+                e.printStackTrace()
+                // Handle error
             }
-        } catch (e: ApiException) {
-            e.printStackTrace()
-            // Handle error
         }
-    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -68,7 +76,7 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         TextField(
             value = uiState.password,
@@ -78,15 +86,17 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = { viewModel.loginWithEmail(onLoginSuccess) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Log In")
+            Text("Login Account")
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "OR")
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
@@ -94,14 +104,43 @@ fun LoginScreen(
                 val signInIntent = googleSignInClient.signInIntent
                 launcher.launch(signInIntent)
             },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Log In with Google")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Add an icon here (for example, a Google logo or Account icon)
+                Image(
+                    painter = painterResource(id = R.drawable.google), // Replace with your preferred icon
+                    contentDescription = "Google Sign In",
+                    modifier = Modifier.padding(end = 8.dp) // Optional: add some space between icon and text
+                )
+                Text(text = "Log In with Google")
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Button(
+            onClick = {
+                val signInIntent = googleSignInClient.signInIntent
+                launcher.launch(signInIntent)
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Add an icon here (for example, a Google logo or Account icon)
+                Image(
+                    painter = painterResource(id = R.drawable.github), // Replace with your preferred icon
+                    contentDescription = "Github Sign In",
+                    modifier = Modifier.padding(end = 8.dp) // Optional: add some space between icon and text
+                )
+                Text(text = "Log In with GitHub")
+            }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextButton(onClick = onNavigateToSignUp, modifier = Modifier.fillMaxWidth()) {
-            Text("Sign Up")
+            Text("I don't have an account")
         }
     }
 }

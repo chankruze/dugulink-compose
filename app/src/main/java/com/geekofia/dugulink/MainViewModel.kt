@@ -2,7 +2,6 @@ package com.geekofia.dugulink
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,18 +17,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _isOnboardingCompleted = MutableStateFlow(preferences.getOnboardingCompleted())
     val isOnboardingCompleted: StateFlow<Boolean> get() = _isOnboardingCompleted
 
-
     fun setOnboardingCompleted() {
         preferences.setOnboardingCompleted(true)
         _isOnboardingCompleted.value = true
         _navigateTo.value = "login"
     }
+
     fun handleLoginSuccess() {
-        _navigateTo.value = "home" // Navigate to home on login success
+        _navigateTo.value = "dashboard" // Navigate to dashboard on login success
     }
 
     fun handleSignUpSuccess() {
-        _navigateTo.value = "home" // Navigate to home on signup success
+        _navigateTo.value = "dashboard" // Navigate to dashboard on signup success
     }
 
     fun handleNavigationToSignUp() {
@@ -37,6 +36,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun handleNavigationToSignIn() {
-        _navigateTo.value = "signup" // Navigate to signup screen
+        _navigateTo.value = "login" // Navigate to signup screen
+    }
+
+    fun handleLogout() {
+        FirebaseAuth.getInstance().signOut() // Sign out the user
+        _navigateTo.value = "login" // Navigate to login after logout
     }
 }
