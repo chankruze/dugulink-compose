@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "271843661329",
+    "project_id": "duguclient",
+    "storage_bucket": "duguclient.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271843661329:android:d73c98a7faf265de0dc3b0",
+        "android_client_info": {
+          "package_name": "com.geekofia.dugulink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271843661329-hsjpoer7uqevjh52vcnterdmljtkujuv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.geekofia.dugulink",
+            "certificate_hash": "4e66edd7ee6efb7efb2556bfcf0c2e584164db8b"
+          }
+        },
+        {
+          "client_id": "271843661329-vj7hjlndda1q0j8h40isf63a69kddm8n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.geekofia.dugulink",
+            "certificate_hash": "b8c03478ce88bf8f5fbeb3a48e617600995a2bbc"
+          }
+        },
+        {
+          "client_id": "271843661329-n3slel2pkpirei8ojao6v6curlrcme0b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmmNXaGZj9p4DLV4apNwbKS7f34ZFcrUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271843661329-n3slel2pkpirei8ojao6v6curlrcme0b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

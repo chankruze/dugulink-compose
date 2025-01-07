@@ -5,6 +5,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 val versionPropsFile = file("version.properties")
@@ -81,6 +82,11 @@ dependencies {
     implementation(libs.androidx.material3)
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    // Firebase BoM
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
 
     // Test dependencies
     testImplementation(libs.junit)
