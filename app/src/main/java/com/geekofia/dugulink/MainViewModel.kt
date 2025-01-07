@@ -14,22 +14,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _navigateTo = MutableStateFlow<String?>(null)
     val navigateTo: StateFlow<String?> get() = _navigateTo
 
-    init {
-        checkAppState()
-    }
+    // Track onboarding completion state
+    private val _isOnboardingCompleted = MutableStateFlow(preferences.getOnboardingCompleted())
+    val isOnboardingCompleted: StateFlow<Boolean> get() = _isOnboardingCompleted
 
-    private fun checkAppState() {
-        val user = FirebaseAuth.getInstance().currentUser
-        val hasCompletedOnboarding = preferences.getOnboardingCompleted()
-
-        when {
-            user != null -> _navigateTo.value = "home" // User is logged in
-            !hasCompletedOnboarding -> _navigateTo.value = "onboarding" // Show onboarding
-            else -> _navigateTo.value = "login" // Default to login
-        }
-    }
 
     fun setOnboardingCompleted() {
         preferences.setOnboardingCompleted(true)
+        _isOnboardingCompleted.value = true
+        _navigateTo.value = "login"
+    }
+    fun handleLoginSuccess() {
+        _navigateTo.value = "home" // Navigate to home on login success
+    }
+
+    fun handleSignUpSuccess() {
+        _navigateTo.value = "home" // Navigate to home on signup success
+    }
+
+    fun handleNavigationToSignUp() {
+        _navigateTo.value = "signup" // Navigate to signup screen
+    }
+
+    fun handleNavigationToSignIn() {
+        _navigateTo.value = "signup" // Navigate to signup screen
     }
 }

@@ -87,6 +87,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+    // Splashscreen API
+    implementation(libs.androidx.core.splashscreen)
 
     // Test dependencies
     testImplementation(libs.junit)

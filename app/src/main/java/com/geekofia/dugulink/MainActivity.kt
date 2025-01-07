@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,8 +18,10 @@ import androidx.navigation.compose.rememberNavController
 import com.geekofia.dugulink.onboarding.ui.OnboardingScreen
 import com.geekofia.dugulink.ui.theme.DuguLinkTheme
 import androidx.compose.runtime.collectAsState
+import androidx.navigation.NavHostController
 import com.geekofia.dugulink.auth.ui.LoginScreen
 import com.geekofia.dugulink.auth.ui.SignUpScreen
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,51 +47,65 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "splash",
+                        startDestination = "root",
                         modifier = Modifier.padding(innerPadding)
                     ) {
+                        composable("root") {
+                            RootScreenContent(navController, mainViewModel)
+                        }
                         composable("onboarding") {
                             OnboardingScreen(onFinish = {
-                                // Mark onboarding as completed
                                 mainViewModel.setOnboardingCompleted()
-                                // Navigate to login
-                                navController.navigate("login") {
-                                    // Optional: If you want to clear the back stack so the user cannot navigate back to the onboarding screen
-                                    popUpTo("onboarding") { inclusive = true }
-                                }
                             })
                         }
                         composable("login") {
                             LoginScreen(
                                 onLoginSuccess = {
-                                    navController.navigate("home") {
-                                        popUpTo("login") {
-                                            inclusive = true
-                                        }
-                                    }
+                                    mainViewModel.handleLoginSuccess()
                                 },
-                                onNavigateToSignUp = { navController.navigate("signup") }
+                                onNavigateToSignUp = { mainViewModel.handleNavigationToSignUp() }
                             )
                         }
                         composable("signup") {
                             SignUpScreen(
                                 onSignUpSuccess = {
-                                    navController.navigate("home") {
-                                        popUpTo("signup") {
-                                            inclusive = true
-                                        }
-                                    }
+                                    mainViewModel.handleSignUpSuccess()
                                 },
-                                onNavigateToLogin = { navController.navigate("login") },
+                                onNavigateToLogin = { mainViewModel.handleNavigationToSignIn() },
                             )
                         }
                         composable("home") {
-                            // Placeholder for home screen
                             Text("Welcome to Home Screen!")
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun RootScreenContent(navController: NavHostController, mainViewModel: MainViewModel) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val onboardingCompleted = mainViewModel.isOnboardingCompleted.collectAsState().value
+
+    // No UI elements
+
+    // Navigate based on the auth state and onboarding status
+    LaunchedEffect(user, onboardingCompleted) {
+        if (user != null) {
+            // If the user is logged in, check onboarding completion
+            if (onboardingCompleted) {
+                mainViewModel.handleLoginSuccess()
+            } else {
+                // If onboarding is not completed, navigate to the onboarding screen
+                navController.navigate("onboarding") {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                }
+            }
+        } else {
+            // If the user is not logged in, navigate to the login screen
+            mainViewModel.handleNavigationToSignIn()
         }
     }
 }
