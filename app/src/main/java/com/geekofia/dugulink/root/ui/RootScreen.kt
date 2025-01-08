@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun RootScreen(navController: NavHostController, mainViewModel: MainViewModel) {
     val user = FirebaseAuth.getInstance().currentUser
-    val onboardingCompleted = mainViewModel.isOnboardingCompleted.collectAsState().value
+    val onboardingCompleted = false
 
     // No UI elements
 
@@ -20,10 +20,10 @@ fun RootScreen(navController: NavHostController, mainViewModel: MainViewModel) {
         if (onboardingCompleted) {
             // If the user is logged in, and onboarding completed, go to dashboard
             if (user != null) {
-                mainViewModel.handleLoginSuccess()
+//                mainViewModel.handleLoginSuccess()
             } else {
                 // If the user is not logged in, navigate to the login screen
-                mainViewModel.handleNavigationToSignIn()
+//                mainViewModel.handleNavigationToSignIn()
             }
         } else {
             // If onboarding is not completed, navigate to the onboarding screen

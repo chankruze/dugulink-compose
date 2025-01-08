@@ -1,12 +1,11 @@
-package com.geekofia.dugulink.utils
+package com.geekofia.dugulink.util
 
 import android.app.Activity
-import android.content.Context
-import android.widget.Toast
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
 
-fun getGithubSignInClient(activity: Activity, context: Context) {
+fun getGithubSignInClient(activity: Activity) {
     val firebaseAuth = FirebaseAuth.getInstance()
 
     // Creating OAuthProvider for GitHub
@@ -27,6 +26,6 @@ fun getGithubSignInClient(activity: Activity, context: Context) {
             // Handle failure and show Snack bar
             // You can log the error or display a message to the user
             val errorMessage = exception.message ?: "GitHub Sign-In failed"
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            Log.d("GIT_HUB_LOGIN", errorMessage)
         }
 }

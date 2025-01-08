@@ -12,11 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -25,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -33,7 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.geekofia.dugulink.R
 import com.geekofia.dugulink.auth.viewmodel.AuthViewModel
-import com.geekofia.dugulink.utils.getGoogleSignInClient
+import com.geekofia.dugulink.util.getGithubSignInClient
+import com.geekofia.dugulink.util.getGoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -47,6 +43,7 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsState()
     val activity = LocalContext.current as Activity
     val googleSignInClient = getGoogleSignInClient(activity)
+
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -121,8 +118,7 @@ fun LoginScreen(
         
         Button(
             onClick = {
-                val signInIntent = googleSignInClient.signInIntent
-                launcher.launch(signInIntent)
+                getGithubSignInClient(activity)
             },
             modifier = Modifier.fillMaxWidth()
         ) {

@@ -1,5 +1,8 @@
 package com.geekofia.dugulink.auth.ui
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,12 +21,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.geekofia.dugulink.R
 import com.geekofia.dugulink.auth.viewmodel.AuthViewModel
+import com.geekofia.dugulink.util.getGoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
 
 @Composable
 fun SignUpScreen(
@@ -32,41 +40,22 @@ fun SignUpScreen(
     viewModel: AuthViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        TextField(
-            value = uiState.email,
-            onValueChange = { viewModel.onEmailChange(it) },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = uiState.password,
-            onValueChange = { viewModel.onPasswordChange(it) },
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { viewModel.signUpWithEmail(onSignUpSuccess) },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text("Sign Up")
+    val activity = LocalContext.current as Activity
+    val googleSignInClient = getGoogleSignInClient(activity)
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
+                val idToken = account.idToken
+                if (idToken != null) {
+                    viewModel.loginWithGoogle(idToken, onSignUpSuccess)
+                }
+            } catch (e: ApiException) {
+                e.printStackTrace()
+                // Handle error
+            }
         }
-
-    }
 
     Column(
         modifier = Modifier
@@ -95,7 +84,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { viewModel.loginWithEmail(onSignUpSuccess) },
+            onClick = { viewModel.signUpWithEmail(onSignUpSuccess) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Create Account")

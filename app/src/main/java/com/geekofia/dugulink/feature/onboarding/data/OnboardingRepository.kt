@@ -1,7 +1,7 @@
-package com.geekofia.dugulink.onboarding.data
+package com.geekofia.dugulink.feature.onboarding.data
 
 import com.geekofia.dugulink.R
-import com.geekofia.dugulink.onboarding.ui.model.OnboardingPage
+import com.geekofia.dugulink.feature.onboarding.model.OnboardingPage
 
 fun getOnboardingPages(): List<OnboardingPage> {
     return listOf(

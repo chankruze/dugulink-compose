@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 val versionPropsFile = file("version.properties")
@@ -14,6 +16,20 @@ val versionProps = Properties().apply {
 }
 
 android {
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("E:\\keys\\DuguLink-debug.jks")
+            storePassword = "Chandu@098."
+            keyAlias = "debug"
+            keyPassword = "Chandu@098."
+        }
+        create("release") {
+            storeFile = file("E:\\keys\\DuguLink-release.jks")
+            storePassword = "Chandu@098."
+            keyPassword = "Chandu@098."
+            keyAlias = "release"
+        }
+    }
     namespace = "com.geekofia.dugulink"
     compileSdk = 34
 
@@ -71,22 +87,36 @@ android {
 }
 
 dependencies {
-
+    // Core Dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+
+    // Compose Dependencies
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
+
     // Firebase BoM
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
     // Splashscreen API
     implementation(libs.androidx.core.splashscreen)
 

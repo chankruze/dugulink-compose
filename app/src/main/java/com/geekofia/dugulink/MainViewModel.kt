@@ -1,46 +1,40 @@
 package com.geekofia.dugulink
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.geekofia.dugulink.data.UserPreferencesRepository
+import com.geekofia.dugulink.navigation.NavScreen
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private val preferences = PreferencesManager(application.applicationContext)
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val auth: FirebaseAuth
+) : ViewModel() {
+    private val _startDestination = MutableStateFlow<String?>(NavScreen.Onboarding.route)
+    val startDestination: StateFlow<String?> = _startDestination
 
-    // MutableStateFlow for managing the current navigation state
-    private val _navigateTo = MutableStateFlow<String?>(null)
-    val navigateTo: StateFlow<String?> get() = _navigateTo
+    var currentScreen: String? = null
+        private set
 
-    // Track onboarding completion state
-    private val _isOnboardingCompleted = MutableStateFlow(preferences.getOnboardingCompleted())
-    val isOnboardingCompleted: StateFlow<Boolean> get() = _isOnboardingCompleted
-
-    fun setOnboardingCompleted() {
-        preferences.setOnboardingCompleted(true)
-        _isOnboardingCompleted.value = true
-        _navigateTo.value = "login"
+    fun checkInitialDestination() {
+        viewModelScope.launch {
+            userPreferencesRepository.isOnboardingCompleted.collect { isCompleted ->
+                _startDestination.value = when {
+                    !isCompleted -> NavScreen.Onboarding.route
+                    auth.currentUser != null -> NavScreen.Dashboard.route
+                    else -> NavScreen.Login.route
+                }
+            }
+        }
     }
 
-    fun handleLoginSuccess() {
-        _navigateTo.value = "dashboard" // Navigate to dashboard on login success
-    }
-
-    fun handleSignUpSuccess() {
-        _navigateTo.value = "dashboard" // Navigate to dashboard on signup success
-    }
-
-    fun handleNavigationToSignUp() {
-        _navigateTo.value = "signup" // Navigate to signup screen
-    }
-
-    fun handleNavigationToSignIn() {
-        _navigateTo.value = "login" // Navigate to signup screen
-    }
-
-    fun handleLogout() {
-        FirebaseAuth.getInstance().signOut() // Sign out the user
-        _navigateTo.value = "login" // Navigate to login after logout
+    fun updateCurrentScreen(screen: String) {
+        currentScreen = screen
     }
 }

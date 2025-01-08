@@ -1,4 +1,4 @@
-package com.geekofia.dugulink.onboarding.ui.model
+package com.geekofia.dugulink.feature.onboarding.model
 
 data class OnboardingPage(
     val title: String,           // Title of the onboarding page
