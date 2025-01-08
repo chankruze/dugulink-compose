@@ -19,17 +19,28 @@ fun OnboardingFooter(
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        TextButton(onClick = onSkipClicked) {
-            Text("Skip")
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             repeat(totalPages) { index ->
-                val color = if (index == currentPage) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                val color =
+                    if (index == currentPage) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.3f
+                        )
+                    }
                 Box(
-                    modifier = Modifier.size(8.dp).padding(2.dp).background(color, shape = CircleShape)
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .size(8.dp)
+                        .background(color, shape = CircleShape)
                 )
             }
         }

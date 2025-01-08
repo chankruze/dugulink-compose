@@ -14,6 +14,14 @@ val versionProps = Properties().apply {
 }
 
 android {
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("E:\\keys\\DuguLink-debug.jks")
+            storePassword = "Chandu@098."
+            keyPassword = "Chandu@098."
+            keyAlias = "debug"
+        }
+    }
     namespace = "com.geekofia.dugulink"
     compileSdk = 34
 

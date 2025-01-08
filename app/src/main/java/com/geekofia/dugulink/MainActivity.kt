@@ -73,7 +73,11 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("dashboard") {
-                            DashboardScreen(mainViewModel)
+                            DashboardScreen(
+                                onSignOut = {
+                                    mainViewModel.handleLogout()
+                                }
+                            )
                         }
                     }
                 }
