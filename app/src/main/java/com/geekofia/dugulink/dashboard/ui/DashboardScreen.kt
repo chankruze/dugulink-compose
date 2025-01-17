@@ -1,10 +1,11 @@
 package com.geekofia.dugulink.dashboard.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,14 +22,15 @@ fun DashboardScreen(
     Scaffold(
         bottomBar = {
             DashboardBottomBar(navController)
+        },
+        content = {
+            DashboardNavigation(
+                navController = navController,
+                onSignOut = onSignOut,
+                modifier = Modifier.padding(it)
+            )
         }
-    ) { padding ->
-        DashboardNavigation(
-            navController = navController,
-            modifier = Modifier.padding(padding),
-            onSignOut = onSignOut
-        )
-    }
+    )
 }
 
 @Composable
@@ -64,13 +66,12 @@ private fun DashboardBottomBar(navController: NavHostController) {
 @Composable
 private fun DashboardNavigation(
     navController: NavHostController,
-    modifier: Modifier = Modifier,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    modifier: Modifier
 ) {
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Home.route,
-        modifier = modifier
     ) {
         composable(BottomNavItem.Home.route) {
             Text(text = "Home")
@@ -79,11 +80,22 @@ private fun DashboardNavigation(
             Text(text = "Profile")
         }
         composable(BottomNavItem.Settings.route) {
-            TextButton(onClick = {
-                onSignOut()
-            }) {
+            Button(
+                onClick = { onSignOut() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = "Sign Out")
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun DashboardPreview() {
+    DashboardScreen(
+        onSignOut = {
+            Log.d("DashboardScreenPreview", "signout clicked")
+        }
+    )
 }

@@ -1,19 +1,25 @@
 package com.geekofia.dugulink.auth.ui
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,9 +33,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.geekofia.dugulink.R
+import com.geekofia.dugulink.auth.ui.components.GoogleButton
 import com.geekofia.dugulink.auth.viewmodel.AuthViewModel
 import com.geekofia.dugulink.utils.getGoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -98,32 +106,46 @@ fun LoginScreen(
 
         Button(
             onClick = { viewModel.loginWithEmail(onLoginSuccess) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text("Login Account")
+            Text("Login with Email")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "OR")
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(1.dp)
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "OR")
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .height(1.dp)
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
+        GoogleButton(
+            text = "Login with Google",
+            loadingText = "Logging you in...",
             onClick = {
                 val signInIntent = googleSignInClient.signInIntent
                 launcher.launch(signInIntent)
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Add an icon here (for example, a Google logo or Account icon)
-                Image(
-                    painter = painterResource(id = R.drawable.google), // Replace with your preferred icon
-                    contentDescription = "Google Sign In",
-                    modifier = Modifier.padding(end = 8.dp) // Optional: add some space between icon and text
-                )
-                Text(text = "Log In with Google")
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -131,4 +153,11 @@ fun LoginScreen(
             Text("I don't have an account")
         }
     }
+}
+
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(onLoginSuccess = { }, onNavigateToSignUp = { })
 }

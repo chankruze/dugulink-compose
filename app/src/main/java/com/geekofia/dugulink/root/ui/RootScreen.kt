@@ -1,5 +1,6 @@
 package com.geekofia.dugulink.root.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,13 +24,14 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.geekofia.dugulink.MainActivity
 import com.geekofia.dugulink.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun RootScreen(navController: NavHostController, mainViewModel: MainViewModel) {
+fun RootScreen(onLoginSuccess: () -> Unit,onNavigateToOnboarding: () -> Unit,  mainViewModel: MainViewModel) {
     val user = FirebaseAuth.getInstance().currentUser
     val onboardingCompleted = mainViewModel.isOnboardingCompleted.collectAsState().value
 
@@ -53,16 +55,15 @@ fun RootScreen(navController: NavHostController, mainViewModel: MainViewModel) {
         if (onboardingCompleted) {
             // If the user is logged in, and onboarding completed, go to dashboard
             if (user != null) {
-                mainViewModel.handleLoginSuccess()
+                onLoginSuccess()
+
             } else {
                 // If the user is not logged in, navigate to the login screen
                 mainViewModel.handleNavigationToSignIn()
             }
         } else {
             // If onboarding is not completed, navigate to the onboarding screen
-            navController.navigate("onboarding") {
-                popUpTo(navController.graph.startDestinationId) { inclusive = true }
-            }
+            onNavigateToOnboarding()
         }
     }
 }

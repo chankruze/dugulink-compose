@@ -1,11 +1,13 @@
 package com.geekofia.dugulink.auth.ui
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,6 +35,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.geekofia.dugulink.R
+import com.geekofia.dugulink.auth.ui.components.GoogleButton
 import com.geekofia.dugulink.auth.viewmodel.AuthViewModel
 import com.geekofia.dugulink.utils.getGoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -99,32 +104,23 @@ fun SignUpScreen(
 
         Button(
             onClick = { viewModel.signUpWithEmail(onSignUpSuccess) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text("Create Account")
+            Text("Sign Up with Email")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "OR")
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
+        GoogleButton(
             onClick = {
                 val signInIntent = googleSignInClient.signInIntent
                 launcher.launch(signInIntent)
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Add an icon here (for example, a Google logo or Account icon)
-                Image(
-                    painter = painterResource(id = R.drawable.google), // Replace with your preferred icon
-                    contentDescription = "Google Sign Up",
-                    modifier = Modifier.padding(end = 8.dp) // Optional: add some space between icon and text
-                )
-                Text(text = "Sign Up with Google")
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

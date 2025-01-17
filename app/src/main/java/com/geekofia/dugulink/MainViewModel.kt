@@ -23,14 +23,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _navigateTo.value = "login"
     }
 
-    fun handleLoginSuccess() {
-        _navigateTo.value = "dashboard" // Navigate to dashboard on login success
-    }
-
-    fun handleSignUpSuccess() {
-        _navigateTo.value = "dashboard" // Navigate to dashboard on signup success
-    }
-
     fun handleNavigationToSignUp() {
         _navigateTo.value = "signup" // Navigate to signup screen
     }
@@ -41,6 +33,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun handleLogout() {
         FirebaseAuth.getInstance().signOut() // Sign out the user
-        _navigateTo.value = "login" // Navigate to login after logout
     }
 }
